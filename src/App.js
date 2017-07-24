@@ -40,7 +40,7 @@ class BooksApp extends React.Component {
   }
 
   //After updates a book, prepare a new shelf with the values returned from
-  //BookAPI. If the book was already loaded, just set its current shelf. If not,
+  //BookAPI. If the book was already loaded, just enforces the correct shelf. If not,
   //BookAPI is called to recover the book and it's added to the "main"shelf
   updateBook = (book, shelf) => {
     BooksAPI.update(book, shelf)
