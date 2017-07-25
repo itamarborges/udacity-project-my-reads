@@ -45,36 +45,23 @@ class BooksApp extends React.Component {
   updateBook = (book, shelf) => {
     BooksAPI.update(book, shelf)
       .then((results) => {
-        let resultBooks = [];
-        results.currentlyReading.forEach((idItem) => {
-          let bookFound = this.state.books.filter((item) => item.id === idItem).shift();
-          if (!bookFound) {
-            this.addBook(idItem, Book.CURRENTLY_READING);
-          } else {
-            bookFound.shelf = Book.CURRENTLY_READING;
-            resultBooks.push(bookFound);
-          }
-        });
-        results.wantToRead.forEach((idItem) => {
-          let bookFound = this.state.books.filter((item) => item.id === idItem).shift();
-          if (!bookFound) {
-            this.addBook(idItem, Book.WANT_TO_READ);
-          } else {
-            bookFound.shelf = Book.WANT_TO_READ;
-            resultBooks.push(bookFound);
-          }
-        });
+        //Prepare a new array with all elements but the one that was updated
+        let resultBooks = this.state.books.filter((item) => item.id !== book.id);
 
-        results.read.forEach((idItem) => {
-          let bookFound = this.state.books.filter((item) => item.id === idItem).shift();
+        if (shelf === Book.NONE) {
+          this.setState({ books: resultBooks });
+        } else {
+          //Search for this book in my state
+          let bookFound = this.state.books.filter((item) => item.id === book.id).shift();
+
           if (!bookFound) {
-            this.addBook(idItem, Book.READ);
+            this.addBook(book.id, shelf);
           } else {
-            bookFound.shelf = Book.READ;
-            resultBooks.push(bookFound);
+            //Enforce book to a new shelf
+            bookFound.shelf = shelf;
+            this.setState({ books: resultBooks.concat(bookFound) });
           }
-        });
-        this.setState({ books: resultBooks });
+        }
       }
     );
   }
